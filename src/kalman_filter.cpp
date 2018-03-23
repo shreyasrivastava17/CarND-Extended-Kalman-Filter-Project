@@ -55,7 +55,7 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 		rho = 0.00001;
 	}
   float phi = atan2(py, px);
-  float rhodot = (px * vx + py * vy) / ro;
+  float rhodot = (px * vx + py * vy) / rho;
   H_x_ << rho , phi, rhodot;
 	VectorXd y = z - H_x_;
 	if( y[1] > M_PI ){ y[1] -= 2*M_PI;}
