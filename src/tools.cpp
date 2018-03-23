@@ -71,10 +71,14 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
 VectorXd  Tools::ConvertPolarToCartesian(float rho, float phi, float rhodot){
   VectorXd radarstatevector_;
   radarstatevector_ = VectorXd(4);
-  const float px = rho*cos(phi);
-  const float py = rho*sin(phi);
-  const float vx = rhodot*cos(phi);
-  const float vy = rhodot*sin(phi);
+  float px = rho*cos(phi);
+  float py = rho*sin(phi);
+  float vx = rhodot*cos(phi);
+  float vy = rhodot*sin(phi);
+	if(px<0.00001){
+		px = 0.00001;
+		}
+	if(py<0.00001){py = 0.00001;}
   radarstatevector_ << px,py,vx,vy;
   return radarstatevector_;
 }
@@ -88,14 +92,17 @@ VectorXd Tools::ConvertCartesianToPolar(VectorXd& x_){
 	float vy = x_(3);
   float sum = pow(px,2)+pow(py,2);
   float a = px+vx+py*vy;
-  float phi= atan(px/py);
+  float phi= atan2(px/py);
+	float rho = sqrt(sum)
+	float rhodot = a/sqrt(sum)
   if(phi > pi){
     phi -= 2*pi;
   }
   if(phi < -pi){
     phi += 2*pi;
   }
-  polarvector_ << (sqrt(sum), phi, a/sqrt(sum));
+	if(rho<.00001){rhodot = 0.0}
+  polarvector_ << RHO, phi, rhodot;
   return polarvector_;
 }
 
