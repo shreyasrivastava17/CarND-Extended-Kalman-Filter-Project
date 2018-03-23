@@ -1,6 +1,6 @@
 #include <iostream>
 #include "tools.h"
-#include <cmath>
+#include <math.h>
 
 using Eigen::VectorXd;
 using Eigen::MatrixXd;
@@ -70,7 +70,7 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
 
 VectorXd  Tools::ConvertPolarToCartesian(float rho, float phi, float rhodot){
   VectorXd radarstatevector_;
-  radarstatevector_ = VectorXd(4)
+  radarstatevector_ = VectorXd(4);
   const float px = rho*cos(phi);
   const float py = rho*sin(phi);
   const float vx = rhodot*cos(phi);
@@ -88,7 +88,7 @@ VectorXd Tools::ConvertCartesianToPolar(VectorXd& x_){
 	float vy = x_(3);
   float sum = pow(px,2)+pow(py,2);
   float a = px+vx+py*vy;
-  float phi= arctan(px/py);
+  float phi= atan(px/py);
   if(phi > pi){
     phi -= 2*pi;
   }
