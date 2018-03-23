@@ -14,8 +14,11 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
                               const vector<VectorXd> &ground_truth) {
  
   VectorXd rmse(4);
-  rmse << 0,0,0,0;
+	rmse << 0,0,0,0;
 
+	// check the validity of the following inputs:
+	//  * the estimation vector size should not be zero
+	//  * the estimation vector size should equal ground truth vector size
 	if(estimations.size() != ground_truth.size()
 			|| estimations.size() == 0){
 		cout << "Invalid estimation or ground_truth data" << endl;
@@ -70,42 +73,5 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
 	return Hj;
 }
 
-VectorXd  Tools::ConvertPolarToCartesian(float rho, float phi, float rhodot){
-  VectorXd radarstatevector_;
-  radarstatevector_ = VectorXd(4);
-  float px = rho*cos(phi);
-  float py = rho*sin(phi);
-  float vx = .15;
-  float vy = .15;
-	if(px<0.00001){
-		px = 0.00001;
-		}
-	if(py<0.00001){py = 0.00001;}
-  radarstatevector_ << px,py,vx,vy;
-  return radarstatevector_;
-}
 
-VectorXd Tools::ConvertCartesianToPolar(VectorXd& x_){
-  VectorXd polarvector_(3);
-  const double pi = 3.14159;
-  float px = x_(0);
-	float py = x_(1);
-	float vx = x_(2);
-	float vy = x_(3);
-  float sum = pow(px,2)+pow(py,2);
-  float a = px+vx+py*vy;
-  float phi= atan2(py,px);
-	float rho = sqrt(sum);
-	if(rho<.00001){rhodot = 0.0;}
-	float rhodot = a/sqrt(sum);
-  if(phi > pi){
-    phi -= 2*pi;
-  }
-  if(phi < -pi){
-    phi += 2*pi;
-  }
-	
-  polarvector_ << rho, phi, rhodot;
-  return polarvector_;
-}
 

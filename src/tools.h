@@ -29,10 +29,6 @@ public:
   */
   MatrixXd CalculateJacobian(const VectorXd& x_state);
 
-  VectorXd ConvertPolarToCartesian(float rho, float phi, float rhodot);
-
-  VectorXd ConvertCartesianToPolar(VectorXd& x_);
-
 };
 
 #endif /* TOOLS_H_ */

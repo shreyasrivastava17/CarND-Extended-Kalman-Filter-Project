@@ -45,8 +45,21 @@ void KalmanFilter::Update(const VectorXd &z) {
 void KalmanFilter::UpdateEKF(const VectorXd &z) {
 
   VectorXd H_x_(3);
-  H_x_ = tools.ConvertCartesianToPolar(x_);
+	float px = x_(0);
+  float py = x_(1);
+  float vx = x_(2);
+  float vy = x_(3);
+  float rho = sqrt(px*px +py*py);
+  //check division by zero
+	if(rho < 0.00001){
+		rho = 0.00001;
+	}
+  float phi = atan2(py, px);
+  float rhodot = (px * vx + py * vy) / ro;
+  H_x_ << rho , phi, rhodot;
 	VectorXd y = z - H_x_;
+	if( y[1] > M_PI ){ y[1] -= 2*M_PI;}
+  else if( y[1] < -M_PI ){ y[1] += 2*M_PI;}
 	MatrixXd Ht = H_.transpose();
 	MatrixXd S = H_ * P_ * Ht + R_;
 	MatrixXd Si = S.inverse();
