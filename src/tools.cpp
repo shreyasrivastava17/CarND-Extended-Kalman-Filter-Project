@@ -45,18 +45,21 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
 MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
  
   MatrixXd Hj(3,4);
-  float px = x_state(0);
+	//recover state parameters
+	float px = x_state(0);
 	float py = x_state(1);
 	float vx = x_state(2);
 	float vy = x_state(3);
 
-  float c1 = px*px+py*py;
+	//pre-compute a set of terms to avoid repeated calculation
+	float c1 = px*px+py*py;
 	float c2 = sqrt(c1);
 	float c3 = (c1*c2);
 
 	//check division by zero
 	if(fabs(c1) < 0.0001){
-		c1 = 0.0001;
+		cout << "CalculateJacobian () - Error - Division by Zero" << endl;
+		return Hj;
 	}
 
 	//compute the Jacobian matrix
@@ -65,7 +68,6 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
 		  py*(vx*py - vy*px)/c3, px*(px*vy - py*vx)/c3, px/c2, py/c2;
 
 	return Hj;
-
 }
 
 VectorXd  Tools::ConvertPolarToCartesian(float rho, float phi, float rhodot){
@@ -73,8 +75,8 @@ VectorXd  Tools::ConvertPolarToCartesian(float rho, float phi, float rhodot){
   radarstatevector_ = VectorXd(4);
   float px = rho*cos(phi);
   float py = rho*sin(phi);
-  float vx = rhodot*cos(phi);
-  float vy = rhodot*sin(phi);
+  float vx = .15;
+  float vy = .15;
 	if(px<0.00001){
 		px = 0.00001;
 		}
@@ -85,24 +87,25 @@ VectorXd  Tools::ConvertPolarToCartesian(float rho, float phi, float rhodot){
 
 VectorXd Tools::ConvertCartesianToPolar(VectorXd& x_){
   VectorXd polarvector_(3);
-  const double pi = 3.14159; 
+  const double pi = 3.14159;
   float px = x_(0);
 	float py = x_(1);
 	float vx = x_(2);
 	float vy = x_(3);
   float sum = pow(px,2)+pow(py,2);
   float a = px+vx+py*vy;
-  float phi= atan2(px/py);
-	float rho = sqrt(sum)
-	float rhodot = a/sqrt(sum)
+  float phi= atan2(py,px);
+	float rho = sqrt(sum);
+	if(rho<.00001){rhodot = 0.0;}
+	float rhodot = a/sqrt(sum);
   if(phi > pi){
     phi -= 2*pi;
   }
   if(phi < -pi){
     phi += 2*pi;
   }
-	if(rho<.00001){rhodot = 0.0}
-  polarvector_ << RHO, phi, rhodot;
+	
+  polarvector_ << rho, phi, rhodot;
   return polarvector_;
 }
 

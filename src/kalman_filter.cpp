@@ -22,13 +22,13 @@ void KalmanFilter::Init(VectorXd &x_in, MatrixXd &P_in, MatrixXd &F_in,
 
 void KalmanFilter::Predict() {
   x_ = F_ * x_;
-        MatrixXd Ft = F_.transpose();
-        P_ = F_ * P_ * Ft + Q_;
+	MatrixXd Ft = F_.transpose();
+	P_ = F_ * P_ * Ft + Q_;
 }
 
 void KalmanFilter::Update(const VectorXd &z) {
   VectorXd z_pred = H_ * x_;
-  VectorXd y = z - z_pred;
+	VectorXd y = z - z_pred;
 	MatrixXd Ht = H_.transpose();
 	MatrixXd S = H_ * P_ * Ht + R_;
 	MatrixXd Si = S.inverse();
