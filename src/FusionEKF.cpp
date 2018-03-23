@@ -72,8 +72,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
       * Remember: you'll need to convert radar from polar to cartesian coordinates.
     */
     // first measurement
-    cout << "EKF: " << endl;
-    ekf_.x_ = VectorXd(4);
+    cout << "EKF: " << endl;    ekf_.x_ = VectorXd(4);
     ekf_.x_ << 1, 1, 1, 1;
 
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
@@ -86,14 +85,15 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
       float px = rho*cos(phi);
       float py = rho*sin(phi);
       float vx = rhodot*cos(phi);
-      float vy = rhodot*sin(phi);
+
+	    float vy = rhodot*sin(phi);
       if(px<0.00001){px = 0.00001;}
       if(py<0.00001){py = 0.00001;}
       ekf_.x_ << px,py,vx,vy;
     }
     else if (measurement_pack.sensor_type_ == MeasurementPackage::LASER) {
 
-      ekf_.x_ << measurement_pack.raw_measurements_[0], measurement_pack.raw_measurements_[1], 0.15, 0.15;
+      ekf_.x_ << measurement_pack.raw_measurements_[0], measurement_pack.raw_measurements_[1], 0, 0;
     }
     previous_timestamp_ = measurement_pack.timestamp_;
     // done initializing, no need to predict or update
@@ -113,6 +113,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
      * Use noise_ax = 9 and noise_ay = 9 for your Q matrix.
    */
    float dt = (measurement_pack.timestamp_ - previous_timestamp_) / 1000000.0;
+   previous_timestamp_ =  measurement_pack.timestamp_;
    const int noise_ax = 9;
    const int noise_ay = 9;
    float dt_2 = dt * dt;
